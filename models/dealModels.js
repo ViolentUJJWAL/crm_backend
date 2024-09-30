@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const dealSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: [true, "user is required"],
     },
     dealName: {

@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     enum: ["developer", "marketing", "noVerify"],
     default: "noVerify"
   },
+  deal: [
+    {
+      type: mongoose.Schema.Types.ObjectId
+    }
+  ],
   role: {
     type: String,
     enum: ["admin", "devAdmin", "marAdmin", "emp", ""],
