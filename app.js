@@ -2,6 +2,7 @@ const colors = require('colors')
 const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
+const authRoutes = require("./routes/authRoutes")
 
 
 
@@ -30,7 +31,7 @@ const appServer = async () => {
         app.use(express.json())
 
         // routes
-        app.use("/api/v1", contactRoutes)
+        app.use("/api/v1/auth", authRoutes)
         
         // server listen
         app.listen(PORT, () => {
