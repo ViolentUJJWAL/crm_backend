@@ -19,6 +19,10 @@ const todoSchema = new mongoose.Schema({
         enum: ['Todo', "Doing", "Done"],
         default: "Todo"
     },
+    description: {
+        type: String,
+        required: [true, "description is required"]
+    }
 },{timestamps:true});
 
 

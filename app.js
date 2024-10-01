@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
 const authRoutes = require("./routes/authRoutes")
+const todoRoutes = require("./routes/todoRoutes")
 const cookieParser = require('cookie-parser');
 
 
@@ -34,6 +35,7 @@ const appServer = async () => {
 
         // routes
         app.use("/api/v1/auth", authRoutes)
+        app.use("/api/v1/todo", todoRoutes)
         
         // server listen
         app.listen(PORT, () => {
