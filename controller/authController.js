@@ -1,20 +1,19 @@
 const jwt = require('jsonwebtoken');
 const user = require('../models/userModels');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
 const hashPassword = require('../utils/password');
 
 // Generate JWT token
 const generateToken = (id,res) => {
   console.log("id",id);
   const token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  res.cookie("jwt",token)
+  res.cookie("token",token)
   console.log("token " + token)
   // return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 };
 
-// Register a new user
+// Register a new user    "/signup"
 exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -48,6 +47,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+// "/login"
 exports.login = async (req, res) =>{
   const { email, password } = req.body;
   try {
@@ -67,6 +67,14 @@ exports.login = async (req, res) =>{
           message:"Invalid credentials"
         })
     }
+
+    if(!userData.verify){
+      return res.status(204).send({
+        success: false,
+        message: "You are not verify by admin"
+      })
+    }
+
     generateToken(userData.id, res)
     userData.password = "*****"
     return res.status(200).send({
@@ -75,6 +83,59 @@ exports.login = async (req, res) =>{
       data: userData
     });
 
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Internel server error"
+    });
+  }
+}
+
+//  "/logout"
+exports.logout = async (req, res) =>{
+  try {
+    res.cookie("token","", { expiresIn: '0s' })
+    return res.status(200).send({
+      success:true,
+      message: "log out successfully"
+    })
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Internel server error"
+    });
+  }
+}
+
+// "/verify/:id"
+exports.verify = async(req, res)=>{
+  const { role, team } = req.body;
+  try {
+    const userdata = await user.findById(req.params.id);
+    if (!userdata){
+      return res.status(400).send({
+        success: false,
+        message: "user not found"
+      })
+    }
+    // Check if the user is an admin
+    if (res.user.role === 'admin') {
+      // Admin can set role and team
+      userdata.verify = true;
+      userdata.role = role;
+      userdata.team = team;
+    } 
+    // Check if the user is a sub-admin
+    else if (res.user.role === 'devAdmin' || res.user.role === 'marAdmin') {
+      // Sub-admin can set team only
+      userdata.verify = true;
+      userdata.team = team;
+    } else {
+      return res.status(403).send('Insufficient permissions');
+    }
+
+    await userdata.save();
+    res.json(userdata);
   } catch (error) {
     res.status(500).send({
       success: false,
