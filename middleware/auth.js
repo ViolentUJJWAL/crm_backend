@@ -6,7 +6,7 @@ const jwtToken = async (req, res, next) => {
   console.log(token)
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
     if(!decoded){
       res.status(401).send({
         message: 'Not authorized, token failed',

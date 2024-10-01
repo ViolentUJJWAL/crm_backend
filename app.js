@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
 const authRoutes = require("./routes/authRoutes")
+const cookieParser = require('cookie-parser');
 
 
 
@@ -29,6 +30,7 @@ const appServer = async () => {
         });
 
         app.use(express.json())
+        app.use(cookieParser());
 
         // routes
         app.use("/api/v1/auth", authRoutes)

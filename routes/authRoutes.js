@@ -8,6 +8,6 @@ const routers = express.Router()
 routers.post("/signup", registerUser)
 routers.post("/login", login)
 routers.get("/logout", logout)
-routers.put("verify/:id", jwtToken, verify)
+routers.put("/verify/:id", jwtToken, verify)
 
 module.exports = routers
